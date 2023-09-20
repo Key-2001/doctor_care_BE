@@ -29,7 +29,7 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ success: false, message: "Failed to delete" });
+      .json({ status: false, message: "Failed to delete" });
   }
 };
 
@@ -54,7 +54,7 @@ const getAllUser = async (req, res) => {
       data: users,
     });
   } catch (error) {
-    return res.status(404).json({ success: false, message: "Not found" });
+    return res.status(404).json({ status: false, message: "Not found" });
   }
 };
 

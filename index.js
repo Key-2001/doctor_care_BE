@@ -6,6 +6,7 @@ const connectDB = require("./db/connect");
 //!Routes import
 const authRoute = require("./Routes/auth");
 const userRoute = require("./Routes/user");
+const doctorRoute = require("./Routes/doctor");
 require("dotenv").config();
 
 const app = express();
@@ -37,6 +38,8 @@ app.use(
 
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/doctors", doctorRoute);
+
 const start = async () => {
   try {
     await connectDB(process.env.MONGODB_URL);
