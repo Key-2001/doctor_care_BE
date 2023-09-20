@@ -33,7 +33,9 @@ const deleteDoctor = async (req, res) => {
 const getSingleDoctor = async (req, res) => {
   const id = req.params.id;
   try {
-    const doctor = await DoctorModel.findById(id).select("-password");
+    const doctor = await DoctorModel.findById(id)
+      .populate("reviews")
+      .select("-password");
     return res.status(200).json({
       status: true,
       message: "Doctor found",

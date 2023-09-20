@@ -7,6 +7,7 @@ const connectDB = require("./db/connect");
 const authRoute = require("./Routes/auth");
 const userRoute = require("./Routes/user");
 const doctorRoute = require("./Routes/doctor");
+const reviewRoute = require("./Routes/review");
 require("dotenv").config();
 
 const app = express();
@@ -39,6 +40,7 @@ app.use(
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/doctors", doctorRoute);
+app.use("/api/v1/reviews", reviewRoute);
 
 const start = async () => {
   try {
