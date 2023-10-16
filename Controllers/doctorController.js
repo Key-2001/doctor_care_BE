@@ -1,3 +1,4 @@
+const BookingModel = require("../models/BookingSchema");
 const DoctorModel = require("../models/DoctorSchema");
 
 const updatedDoctor = async (req, res) => {
@@ -71,4 +72,33 @@ const getAllDoctor = async (req, res) => {
   }
 };
 
-module.exports = { updatedDoctor, deleteDoctor, getSingleDoctor, getAllDoctor };
+const getDoctorProfile = async (req, res) => {
+  const doctorId = req.userId;
+  try {
+    const doctor = await DoctorModel.findById(doctorId);
+    if (!doctor) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctor not found" });
+    }
+    const { password, ...rest } = doctor._doc;
+    const appointments = await BookingModel.find({ doctor: doctorId });
+    return res.status(200).json({
+      success: true,
+      message: "Profile info is getting",
+      data: { ...rest, appointments },
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong, cannot get" });
+  }
+};
+
+module.exports = {
+  updatedDoctor,
+  deleteDoctor,
+  getSingleDoctor,
+  getAllDoctor,
+  getDoctorProfile,
+};

@@ -1,4 +1,6 @@
 const UserModel = require("../models/UserSchema");
+const BookingModel = require("../models/BookingSchema");
+const DoctorModel = require("../models/DoctorSchema");
 
 const updateUser = async (req, res) => {
   const id = req.params.id;
@@ -27,9 +29,7 @@ const deleteUser = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Successfully deleted!" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ status: false, message: "Failed to delete" });
+    return res.status(500).json({ status: false, message: "Failed to delete" });
   }
 };
 
@@ -58,9 +58,57 @@ const getAllUser = async (req, res) => {
   }
 };
 
+const getUserProfile = async (req, res) => {
+  const userId = req.userId;
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    const { password, ...rest } = user._doc;
+    return res.status(200).json({
+      success: true,
+      message: "Profile info is getting",
+      data: { ...rest },
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong, cannot get " });
+  }
+};
+
+const getMyAppointments = async (req, res) => {
+  try {
+    //! Step - 1: retrieve appointments from booking for specific user
+    const bookings = await BookingModel.find({ user: req.userId });
+
+    //! Step - 2: extract doctor ids from appointment bookings
+    const doctorIds = bookings.map((el) => el?.doctor.id);
+    //! Step - 3: retrieve doctors using doctor ids
+    const doctors = await DoctorModel.find({ _id: { $in: doctorIds } }).select(
+      "-password"
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Appointments are getting",
+      data: doctors,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong, cannot get " });
+  }
+};
+
 module.exports = {
   getAllUser,
   getSingleUser,
   updateUser,
   deleteUser,
+  getUserProfile,
+  getMyAppointments,
 };
